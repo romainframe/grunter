@@ -1,4 +1,4 @@
 
 .PHONY: install
 install:
-	@go build -o ~/go/bin/grunter cmd/*
+	@go build -o ~/go/bin/grunter cmd/grunter/*

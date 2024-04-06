@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/romainframe/grunter"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "grunter",
-	Short: "Grunter is a tool to generate Terragrunt configurations",
+	Use:           "grunter",
+	Version:       grunter.Version,
+	SilenceUsage:  true,
+	SilenceErrors: true,
+	Short:         "Grunter is a tool to generate Terragrunt configurations",
 }
 
 func Execute() {

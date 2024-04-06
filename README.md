@@ -95,14 +95,6 @@ inputs = {
 }
 ```
 
-## Contributors
-
-Without the contributions from these fine folks, this project would be a total dud!
-
-<a href="https://github.com/romainframe/grunter/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=romainframe/grunter" />
-</a>
-
 ---
 
 © 2024 Romain Untereiner. All materials licensed under [Apache v2.0](http://www.apache.org/licenses/LICENSE-2.0)

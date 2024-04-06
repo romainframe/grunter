@@ -10,9 +10,9 @@ import (
 // Predefined errors for file operations.
 var (
 	// ErrInitGrunter is returned when Grunter initialization fails.
-	ErrInitGrunter = fmt.Errorf("⛔️ failed to initialize grunter")
+	ErrInitGrunter = fmt.Errorf("failed to initialize grunter")
 	// ErrGenConfig is returned when Terragrunt configuration generation fails.
-	ErrGenConfig = fmt.Errorf("⛔️ failed to generate Terragrunt configuration")
+	ErrGenConfig = fmt.Errorf("failed to generate Terragrunt configuration")
 )
 
 // Gen generates the Terragrunt configuration based on the provided input and output paths.

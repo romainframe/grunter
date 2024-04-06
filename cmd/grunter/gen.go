@@ -11,12 +11,13 @@ import (
 // Predefined errors for file operations.
 var (
 	// ErrGenConfig is returned when Terragrunt configuration generation fails.
-	ErrGenConfig = fmt.Errorf("command 'gen' failed")
+	ErrGenConfig = fmt.Errorf("⛔️ command 'gen' failed")
 )
 
 // genCmd represents the grunt command
 var genCmd = &cobra.Command{
-	Use:   "gen",
+	Use: "gen",
+	// Version: grunter.Version,
 	Short: "Generate Terragrunt configuration files",
 	Long: `Generate Terragrunt configuration files based on the provided config input.
 
