@@ -1,0 +1,12 @@
+template: modules/k8s/namespace/default
+dependencies:
+  - path: ../../../cluster
+    pathType: relative
+    withOutputs: true
+  - path: "${local.env}/example-${local.stack_namespace}"
+    pathType: root
+    withOutputs: true
+inputs:
+  name: local.values.name
+  namespace: "${local.stack_namespace}"
+  example: "${module.example.outputs.example}"
