@@ -8,13 +8,13 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/romainframe/grunter.svg)](https://pkg.go.dev/github.com/romainframe/grunter)
 [![GitHub](https://img.shields.io/github/license/romainframe/grunter)]
 
-Grunter is a simple Terragrunt file generator. It generates a `terragrunt.hcl` file from your `config.json` file in the current directory.
+Grunter is a simple Terragrunt file generator. It generates a `terragrunt.hcl` file from your `config.yaml` file in the current directory.
 
 It enables you to define your Terragrunt configuration in a simple YAML file, which is easier to read and maintain than the HCL format. It saves you from writing the boilerplate code for each module and keeps your IaaC configuration even DRYer.
 
 It is meant to be used in conjunction with Terragrunt, a thin wrapper for Terraform that provides extra tools for keeping your configurations DRY and managing remote state.
 
-The `config.json` format is defined [here](./pkg/config/config.go).
+The configuration format is defined [here](./pkg/config/config.go).
 
 ## Installation
 
@@ -30,7 +30,7 @@ grunter gen
 
 ## Example
 
-Given the following `config.json` file:
+Given the following `config.yaml` file:
 
 ```yaml
 template: modules/k8s/namespace/default

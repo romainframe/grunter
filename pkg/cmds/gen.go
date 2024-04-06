@@ -16,12 +16,12 @@ var (
 )
 
 // Gen generates the Terragrunt configuration based on the provided input and output paths.
-// If inputPath is empty, it defaults to "config.json". This function initializes Grunter
+// If inputPath is empty, it defaults to "config.yaml". This function initializes Grunter
 // with the given inputPath, and then calls its Grunt method to generate the configuration
 // at outputPath. It handles and returns errors during the Grunter initialization and configuration
 // generation process.
 func Gen(inputPath, outputPath string) error {
-	// Default input path to "config.json" if empty
+	// Default input path to "config.yaml" if empty
 	if inputPath == "" {
 		inputPath = "config.yaml"
 	}
