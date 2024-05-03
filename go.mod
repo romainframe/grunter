@@ -4,6 +4,8 @@ go 1.21.5
 
 require (
 	github.com/hashicorp/hcl/v2 v2.20.1
+	github.com/iancoleman/strcase v0.3.0
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/spf13/cobra v1.8.0
 	gopkg.in/yaml.v2 v2.4.0
 )

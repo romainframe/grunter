@@ -13,9 +13,13 @@ var (
 	ErrFindUpwards = fmt.Errorf("target directory not found")
 )
 
-// findUpwards searches for the first part of the path starting from the current directory and moving upwards.
+// FindUpwards searches for the first part of the path starting from the current directory and moving upwards.
 // Returns the path to the found directory or an empty string if not found.
-func findUpwards(startDir, target string) (string, error) {
+func FindUpwards(startDir, target string, maxDepth int) (string, error) {
+	if maxDepth <= 0 {
+		return "", fmt.Errorf("folder search max depth reached")
+	}
+
 	var foundPath string
 	err := filepath.WalkDir(startDir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
@@ -46,7 +50,7 @@ func findUpwards(startDir, target string) (string, error) {
 		return foundPath, nil
 	}
 
-	return findUpwards(newStartDir, target)
+	return FindUpwards(newStartDir, target, maxDepth-1)
 }
 
 // findDownwards searches for the remaining parts of the path within the given directory.
@@ -85,7 +89,7 @@ func findInDirectory(dir, target string) (string, error) {
 }
 
 // FindFileInParentTarget searches a file in a parent target folder.
-func FindFileInParentTarget(parentFolder, targetFolder, fileName string) (string, error) {
+func FindFileInParentTarget(parentFolder, targetFolder, fileName string, maxDepth int) (string, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -98,7 +102,7 @@ func FindFileInParentTarget(parentFolder, targetFolder, fileName string) (string
 	}
 
 	// Find the first part of the parentFolder path
-	foundPath, err := findUpwards(currentDir, parts[0])
+	foundPath, err := FindUpwards(currentDir, parts[0], maxDepth)
 	if err != nil {
 		return "", err
 	}
@@ -126,13 +130,13 @@ func FindFileInParentTarget(parentFolder, targetFolder, fileName string) (string
 	return ComputeRelativePath(currentDir, filePath)
 }
 
-func FindFileInParent(fileName string) (string, error) {
+func FindFileInParent(fileName string, maxDepth int) (string, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return "", err
 	}
 
-	filePath, err := findUpwards(currentDir, fileName)
+	filePath, err := FindUpwards(currentDir, fileName, maxDepth)
 	if err != nil {
 		return "", err
 	}
@@ -153,4 +157,17 @@ func ComputeRelativePath(basePath, targetPath string) (string, error) {
 	}
 
 	return relPath, nil // Return the relative path
+}
+
+func DoesFileOrDirExists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
+}
+
+func IsDir(path string) bool {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return fi.IsDir()
 }

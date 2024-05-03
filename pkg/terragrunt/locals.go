@@ -2,6 +2,7 @@ package terragrunt
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -33,10 +34,27 @@ func (ls LocalsSearch) Add(values ...string) error {
 
 // add is a helper function that extracts local variables from a single string and adds them to the set.
 func (ls LocalsSearch) add(value string) error {
+	value = strings.TrimSpace(value)
+
+	// Shortcut locals
+	if strings.HasPrefix(value, "values.") {
+		v := "local.values.locals"
+		parts := strings.Split(value, ".")
+		for i, part := range parts {
+			if i > 0 && part != " " {
+				v = fmt.Sprintf("%s.%s", v, part)
+			}
+		}
+		ls.values[v] = struct{}{}
+		return nil
+	}
+
+	// Classic locals
 	if strings.HasPrefix(value, "local.") {
 		ls.values[value] = struct{}{}
 		return nil
 	}
+
 	if strings.Contains(value, "local.") {
 		parts := strings.Split(value, " ")
 		for _, part := range parts {
@@ -48,7 +66,25 @@ func (ls LocalsSearch) add(value string) error {
 				ls.values[localPath] = struct{}{}
 			}
 		}
+		return nil
 	}
+
+	// Local variable validation: a.b.d.c.d.e
+	validLocalDefRegex := regexp.MustCompile(`^[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*$`)
+	if validLocalDefRegex.MatchString(value) {
+		parts := strings.Split(value, ".")
+		if len(parts) > 0 {
+			v := fmt.Sprintf("local.%s.locals", parts[0])
+			for i, part := range parts {
+				if i > 0 && part != " " {
+					v = fmt.Sprintf("%s.%s", v, part)
+				}
+			}
+			ls.values[v] = struct{}{}
+			return nil
+		}
+	}
+
 	return nil
 }
 

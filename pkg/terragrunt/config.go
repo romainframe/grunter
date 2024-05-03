@@ -1,12 +1,28 @@
 package terragrunt
 
+import "strings"
+
 // Config stores the configuration for a Terragrunt project, including dependencies,
 // local variables, OpenTofu configurations, and inputs.
 type Config struct {
 	Dependencies   []Dependency      `json:"dependencies"`    // List of external Terragrunt dependencies
 	LocalVariables []LocalVariable   `json:"local_variables"` // Local variables specific to the Terragrunt configuration
-	OpenTofu       OFConfig          `json:"open_tofu"`       // Configuration for OpenTofu, a fictional feature or module
+	OpenTofu       OpenTofu          `json:"open_tofu"`       // Configuration for OpenTofu, a fictional feature or module
 	Inputs         map[string]string `json:"inputs"`          // Key-value pairs for Terragrunt inputs
+}
+
+func (c Config) GetDefaultValues() map[string]string {
+	defaults := make(map[string]string)
+	for _, value := range c.Inputs {
+		val := ""
+		if strings.HasPrefix(value, "local.values.locals") {
+			val = strings.TrimPrefix(value, "local.values.locals.")
+		}
+		if val != "" {
+			defaults[val] = val
+		}
+	}
+	return defaults
 }
 
 // Dependency defines a Terragrunt project's external dependency, including its
@@ -34,7 +50,7 @@ type BeforeHook struct {
 
 // OFConfig holds configurations related to OpenTofu within a Terragrunt project, including
 // its source and any before-hooks that should run.
-type OFConfig struct {
+type OpenTofu struct {
 	Source      string       `json:"source"`       // The source configuration for OpenTofu
 	BeforeHooks []BeforeHook `json:"before_hooks"` // Hooks to run before certain actions are executed
 }

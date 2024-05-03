@@ -1,4 +1,4 @@
-package config
+package block
 
 import (
 	"fmt"
@@ -17,18 +17,18 @@ var K8sBeforeHooks = map[string]BeforeHook{
 	},
 }
 
-// K8sConfigBuilder initializes a ConfigBuilder specifically for Kubernetes templates.
+// K8sGruntBuilder initializes a GruntBuilder specifically for Kubernetes templates.
 // It ensures the presence of required metadata and sets up necessary local configurations
 // and pre-execution hooks based on the cloud environment.
-var K8sConfigBuilder = ConfigBuilder{
+var K8sGruntBuilder = GruntBuilder{
 	// Matches returns true if the configuration template is intended for Kubernetes.
-	Matches: func(c Config) bool {
+	Matches: func(c Block) bool {
 		return strings.Contains(c.Template, "k8s")
 	},
-	// Build enriches the provided Config with Kubernetes-specific settings.
+	// Build enriches the provided Block with Kubernetes-specific settings.
 	// It validates the template, metadata, and cluster configuration, sets the cluster local,
 	// and adds the appropriate pre-execution hook based on the cloud environment.
-	Build: func(c Config) (Config, error) {
+	Build: func(c Block) (Block, error) {
 		if c.Template == "" {
 			return c, ErrTemplateRequired
 		}
@@ -45,7 +45,7 @@ var K8sConfigBuilder = ConfigBuilder{
 		// Find and set the cluster local configuration
 		parentFolder := "services/k8s"
 		clusterFile := "values.hcl"
-		clusterFilePath, err := utils.FindFileInParentTarget(parentFolder, clusterMetadataValue, clusterFile)
+		clusterFilePath, err := utils.FindFileInParentTarget(parentFolder, clusterMetadataValue, clusterFile, 50)
 		if err != nil {
 			return c, utils.WrapError(ErrFilePathNotFound(fmt.Sprintf("%s/%s/.../%s", parentFolder, clusterMetadataValue, clusterFile)), err)
 		}

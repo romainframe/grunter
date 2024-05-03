@@ -1,4 +1,4 @@
-package config
+package block
 
 import (
 	"encoding/json"
@@ -9,9 +9,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Config holds the structure for application configuration, supporting nested objects
+// Block holds the structure for application configuration, supporting nested objects
 // for various configuration aspects like metadata, dependencies, and hooks.
-type Config struct {
+type Block struct {
+	Name         string            `json:"name"`         // Unique identifier for the block.
 	Template     string            `json:"template"`     // Template path or identifier.
 	Metadata     map[string]string `json:"metadata"`     // Arbitrary metadata for templating.
 	Dependencies []Dependency      `json:"dependencies"` // List of external dependencies.
@@ -38,32 +39,32 @@ type Dependency struct {
 	WithOutputs bool   `json:"withOutputs"` // Whether to include outputs from the dependency.
 }
 
-// NewFromFile creates a Config object from a JSON or YAML file located at configPath.
-// It reads the file, unmarshals into a Config struct, and processes
+// NewFromFile creates a Block object from a JSON or YAML file located at configPath.
+// It reads the file, unmarshals into a Block struct, and processes
 // it through Build() to build & validate the config.
-func NewFromFile(configPath string) (Config, error) {
+func NewFromFile(configPath string) (Block, error) {
 	// Read the entire configuration file into memory.
 	fileContents, err := os.ReadFile(configPath)
 	if err != nil {
-		return Config{}, err // Return an empty Config and the error.
+		return Block{}, err // Return an empty Block and the error.
 	}
 
 	// Determine the file extension to decide on the unmarshalling method.
 	ext := filepath.Ext(configPath)
-	var config Config
+	var config Block
 
 	switch ext {
 	case ".json":
 		if err := json.Unmarshal(fileContents, &config); err != nil {
-			return Config{}, err // Return an error if the JSON is invalid.
+			return Block{}, err // Return an error if the JSON is invalid.
 		}
 	case ".yaml", ".yml":
 		if err := yaml.Unmarshal(fileContents, &config); err != nil {
-			return Config{}, err // Return an error if the YAML is invalid.
+			return Block{}, err // Return an error if the YAML is invalid.
 		}
 	default:
-		return Config{}, errors.New("unsupported file type")
+		return Block{}, errors.New("unsupported file type")
 	}
 
-	return config, nil // Return the fully initialized Config.
+	return config, nil // Return the fully initialized Block.
 }

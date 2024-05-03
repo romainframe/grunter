@@ -75,7 +75,7 @@ func Get(h HCL, key string) (string, bool) {
 // It wraps and returns any error encountered during the file search or parsing process, with additional context.
 func GetHCLFromParent(name string) (HCL, error) {
 	// Attempt to locate the .hcl file in the current or any parent directory.
-	cloudFile, err := FindFileInParent(name + ".hcl")
+	cloudFile, err := FindFileInParent(name+".hcl", 50)
 	if err != nil {
 		// Return an enhanced error message if the file is not found.
 		return HCL{}, WrapError(ErrFileNotFound, err)

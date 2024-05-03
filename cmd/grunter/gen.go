@@ -2,10 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/spf13/cobra"
 
 	"github.com/romainframe/grunter/pkg/cmds"
+	"github.com/romainframe/grunter/pkg/env"
 	"github.com/romainframe/grunter/pkg/utils"
-	"github.com/spf13/cobra"
 )
 
 // Predefined errors for file operations.
@@ -28,12 +32,27 @@ information and generates a corresponding Terragrunt configuration file.`,
 		inputPath, _ := cmd.Flags().GetString("input")
 		outputPath, _ := cmd.Flags().GetString("output")
 
-		err := cmds.Gen(inputPath, outputPath)
+		// Get repoRoot from env variable GRUNT_REPO_ROOT
+		repoRoot := os.Getenv("GRUNT_REPO_ROOT")
+		if repoRoot == "" {
+			return utils.WrapError(ErrGenConfig, fmt.Errorf("environment variable GRUNT_REPO_ROOT not set"))
+		}
+
+		repoRoot, err := filepath.Abs(repoRoot)
 		if err != nil {
 			return utils.WrapError(ErrGenConfig, err)
 		}
 
-		fmt.Printf("🎉 Terragrunt configuration successfully generated at '%s'\n", outputPath)
+		env.GRUNT_REPO_ROOT = repoRoot
+
+		generatedFiles, err := cmds.Gen(inputPath, outputPath)
+		if err != nil {
+			return utils.WrapError(ErrGenConfig, err)
+		}
+
+		for _, f := range generatedFiles {
+			fmt.Printf("🎉 Terragrunt configuration successfully generated at '%s'\n", f)
+		}
 		return nil
 	},
 }
